@@ -3,6 +3,7 @@ package com.tmikic.core.graphics;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
@@ -20,6 +21,8 @@ import javax.swing.JPanel;
 
 import com.tmikic.core.actionlistner;
 import com.tmikic.core.application;
+import com.tmikic.core.files.datastoreage;
+import com.tmikic.core.input.mouseinput;
 
 public class Screen {
 
@@ -53,12 +56,36 @@ public class Screen {
 	public void render() {
 
 	}
-
+    static datastoreage ds = new datastoreage();
 	static actionlistner ac = new actionlistner();
 	static application app = new application();
-	public static void print(Graphics g) {
+	
+	 static int count = 0;
+	 static boolean first = true;
+	static BufferedImage fimg = null;
+		static BufferedImage img = null;
+		private static mouseinput line = new mouseinput();
+	public static void print(Graphics g , Container frame) {
+		img = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
+		File data = new File("C:\\drawline\\data\\data.txt");
+		if(!data.exists()){
+			
+		
+		
+		}else{
+
+			if(first == true){
+				
+				String s = ds.read();
+				System.out.print(s);
+				count = Integer.parseInt(s);
+				System.out.println(s);
+				
+				first = false;
+			}
+		}
 		File export = new File("C:\\drawline");
-		;
+		
 		if (!export.exists()) {
 			
     	    boolean result = false;
@@ -74,26 +101,27 @@ public class Screen {
     	        System.out.println("DIR created");  
     	    }
 		}
-    	    
-		  BufferedImage image = new BufferedImage(app.width*3,app.height*3,BufferedImage.TYPE_INT_ARGB);
-	    // Create a `BufferedImage` and create the its `Graphics`
-	   image = GraphicsEnvironment.getLocalGraphicsEnvironment()
-	            .getDefaultScreenDevice().getDefaultConfiguration()
-	            .createCompatibleImage(app.width*3, app.height*3);
+		
+		line.drawline(g);
+		 g = img.createGraphics();
+		
+		
+		
+		
+		frame.paintAll(g);
 
-       Graphics2D graphics = (Graphics2D) g;
-	    // Print to BufferedImage
-	    BufferedImage bimage = 
-	            ((Graphics2D) graphics).getDeviceConfiguration().createCompatibleImage(
-	              width*3, height*3, Transparency.TRANSLUCENT);
-	    app.paint(graphics);
-	    graphics.dispose();
+		g.dispose();
+		
+		img = img.getSubimage(0, 45,frame.getWidth(), frame.getHeight()-45);
+		try {
+			count=count+1;
+		    ImageIO.write(img, "png", new File(export+"\\Image_"+count+".png"));
+		} catch (IOException ex) {
+		    ex.printStackTrace();
+		}
 	    // Output the `BufferedImage` via `ImageIO`
-	    try {
-	        ImageIO.write(bimage, "png", new File(export+"\\Image.png"));
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+		String a = count + "";
+	    ds.writefile(a);
 	    System.out.println("done");
 	    ac.done = 1;
 	}

@@ -15,7 +15,7 @@ import com.tmikic.core.graphics.Screen;
 
 
 public class actionlistner implements ActionListener {
-	public static int done;
+	public static int done = 1;
 	 public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == application.grid1){
 			application.grid = 1;
